@@ -148,7 +148,7 @@
                  <small class="text-muted">Dibuat oleh: <span th:text="${projectDetail.createdBy.username}"></span></small>
                  <div class="mt-2">
                     <div th:if="${isOwner}">
-        <label><strong>Status Task Proyek (Progress):</strong></label>
+        <label><strong>Status Pengerjaan:</strong></label>
     <!-- ✅ Progress bar hanya tampil jika user adalah owner -->
 
     <div class="progress" style="height: 30px;">
@@ -211,7 +211,7 @@
                                 <div class="fw-bold" th:text="${task.task}">Nama Tugas</div>
                                 <small>
                                     Tenggat Waktu: <span th:text="${task.deadline}">2025-01-01</span><br>
-                                    Di Tugaskan Kepada: <span th:text="${task.user.username}">User</span>
+                                    Ditugaskan Kepada: <span th:text="${task.user.username}">User</span>
                                 </small>
                             </div>
                             <div class="text-end">
