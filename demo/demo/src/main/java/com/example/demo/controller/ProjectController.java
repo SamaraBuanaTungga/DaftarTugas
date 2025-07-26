@@ -101,7 +101,6 @@ public String showProjects(Model model, Principal principal) {
         groupTodoService.deleteProject(id);
         return "redirect:/project";
     }
-
 @GetMapping("/project/{projectId}")
 public String viewProjectDetail(@PathVariable Long projectId, Model model, Principal principal) {
     String currentUsername = principal.getName();
@@ -109,15 +108,15 @@ public String viewProjectDetail(@PathVariable Long projectId, Model model, Princ
     if (currentUserOpt.isEmpty()) {
         return "redirect:/login";
     }
-    User currentUser = currentUserOpt.get();
 
+    User currentUser = currentUserOpt.get();
     GroupTodo project = groupTodoRepository.findById(projectId).orElse(null);
     if (project == null) {
         return "redirect:/project";
     }
 
     boolean isOwner = project.getCreatedBy().getUsername().equals(currentUsername);
-    boolean isMember = projectMemberRepository.existsByUserAndGroupTodo(currentUser, project); // ✅ FIXED HERE
+    boolean isMember = projectMemberRepository.existsByUserAndGroupTodo(currentUser, project);
 
     if (!isOwner && !isMember) {
         return "redirect:/project";
@@ -126,41 +125,109 @@ public String viewProjectDetail(@PathVariable Long projectId, Model model, Princ
     model.addAttribute("projectDetail", project);
     model.addAttribute("username", currentUsername);
 
-    List<ToDo> allTasks = todoRepo.findByGroup(project); // Ganti sesuai nama field relasi group/project di ToDo
+    List<ToDo> allTasks = todoRepo.findByGroup(project);
 
     if (!isOwner) {
-        // Member hanya boleh lihat task miliknya
         allTasks = allTasks.stream()
-                .filter(t -> t.getUser().getUsername().equals(currentUsername))
+                .filter(t -> t.getUser() != null && t.getUser().getUsername().equals(currentUsername))
                 .collect(Collectors.toList());
+    }
+
+    LocalDate now = LocalDate.now();
+
+    long totalCompletedOnTime = allTasks.stream()
+            .filter(t -> {
+                LocalDate deadline = t.getDeadline();
+                LocalDate completedAt = t.getCompleteAt();
+                return t.isCompleted()
+                        && deadline != null
+                        && completedAt != null
+                        && !completedAt.isAfter(deadline);
+            })
+            .count();
+
+    long totalLate = allTasks.stream()
+            .filter(t -> {
+                LocalDate deadline = t.getDeadline();
+                LocalDate completedAt = t.getCompleteAt();
+
+                if (deadline == null) return false;
+
+                // Belum selesai tapi deadline lewat
+                if (!t.isCompleted() && deadline.isBefore(now)) return true;
+
+                // Selesai tapi melebihi deadline
+                if (t.isCompleted() && completedAt != null && completedAt.isAfter(deadline)) return true;
+
+                return false;
+            })
+            .count();
+
+    long totalUnfinished = allTasks.stream()
+            .filter(t -> !t.isCompleted()
+                    && (t.getDeadline() == null || !t.getDeadline().isBefore(now)))
+            .count();
+
+    long totalTask = totalCompletedOnTime + totalLate + totalUnfinished;
+    if (totalTask == 0) {
+        totalTask = 1; // Hindari divide by zero
     }
 
     model.addAttribute("projectTasks", allTasks);
     model.addAttribute("isOwner", isOwner);
+    model.addAttribute("totalCompletedTask", totalCompletedOnTime);
+    model.addAttribute("totalLateTask", totalLate);
+    model.addAttribute("totalUnfinishedTask", totalUnfinished);
+    model.addAttribute("totalTaskCount", totalTask);
 
     return "project";
 }
 
 
-@PostMapping("/project/{id}/add-member")
-public String addMemberToProject(@PathVariable Long id, @RequestParam String username) {
-    GroupTodo project = groupTodoService.getProjectById(id);
-    User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("User tidak ditemukan: " + username));
 
+@PostMapping("/project/{id}/add-member")
+public String addMemberToProject(@PathVariable Long id,
+                                 @RequestParam String username,
+                                 RedirectAttributes redirectAttributes) {
+    GroupTodo project = groupTodoService.getProjectById(id);
+    Optional<User> userOpt = userRepository.findByUsername(username);
+
+    if (userOpt.isEmpty()) {
+        redirectAttributes.addFlashAttribute("errorMessage", "User '" + username + "' tidak ditemukan.");
+        return "redirect:/project/" + id;
+    }
+
+    User user = userOpt.get();
+
+    // ❌ Cek apakah user yang ditambahkan adalah owner
+    if (project.getCreatedBy().getId().equals(user.getId())) {
+        redirectAttributes.addFlashAttribute("errorMessage", "Owner tidak bisa ditambahkan sebagai member.");
+        return "redirect:/project/" + id;
+    }
+
+    // ❌ Cek apakah user sudah jadi member
+    if (projectMemberRepository.existsByUserAndGroupTodo(user, project)) {
+        redirectAttributes.addFlashAttribute("errorMessage", "User '" + username + "' sudah menjadi member.");
+        return "redirect:/project/" + id;
+    }
+
+    // ✅ Tambahkan member baru
     ProjectMember member = new ProjectMember();
     member.setGroupTodo(project);
     member.setUser(user);
     projectMemberRepository.save(member);
 
+    redirectAttributes.addFlashAttribute("successMessage", "Berhasil menambahkan member: " + username);
     return "redirect:/project/" + id;
 }
+
+
 
 @PostMapping("/project/{id}/add-task")
 public String addTaskToProject(
         @PathVariable("id") Long projectId,
         @RequestParam("task") String task,
-        @RequestParam("deadline") String deadline,
+        @RequestParam("deadline") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate deadline,
         @RequestParam("assigneeId") Long assigneeId) {
 
     GroupTodo group = groupTodoRepository.findById(projectId).orElseThrow();
@@ -168,15 +235,16 @@ public String addTaskToProject(
 
     ToDo newTask = new ToDo();
     newTask.setTask(task);
-    newTask.setDeadline(LocalDate.now());
-    newTask.setUser(assignee);        // Penting!
-    newTask.setGroup(group);          // Penting!
+    newTask.setDeadline(deadline); // ✅ pakai deadline dari form
+    newTask.setUser(assignee);
+    newTask.setGroup(group);
     newTask.setCompleted(false);
 
-    todoRepo.save(newTask);           // Simpan ke database
+    todoRepo.save(newTask);
 
     return "redirect:/project/" + projectId;
 }
+
 
 
 @PostMapping("/project/{projectId}/task/edit/{taskId}")
@@ -254,6 +322,34 @@ public String markTaskAsCompleted(@PathVariable Long projectId,
     todoRepo.save(task);
 
     return "redirect:/project/" + projectId;
+}
+
+@GetMapping("/project/search")
+public String searchProjects(@RequestParam("keyword") String keyword, Model model, Principal principal) {
+    if (principal != null) {
+        String username = principal.getName();
+        User currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found: " + username));
+
+        // Cari proyek berdasarkan keyword untuk owner dan member
+        List<GroupTodo> ownedProjects = groupTodoRepository.findByCreatedByAndTitleContainingIgnoreCase(currentUser, keyword);
+        List<GroupTodo> memberProjects = groupTodoRepository.findProjectsByMember(currentUser)
+                .stream()
+                .filter(p -> p.getTitle().toLowerCase().contains(keyword.toLowerCase()))
+                .collect(Collectors.toList());
+
+        Set<GroupTodo> allProjects = new HashSet<>();
+        allProjects.addAll(ownedProjects);
+        allProjects.addAll(memberProjects);
+
+        model.addAttribute("projects", allProjects);
+        model.addAttribute("username", username);
+        model.addAttribute("searchKeyword", keyword);
+    } else {
+        model.addAttribute("projects", List.of());
+    }
+
+    return "project"; // tetap gunakan halaman project.html
 }
 
 
