@@ -68,6 +68,6 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
 
 ## Demo Proyek
 <ul>
-  <li>Github: <a href="[https://github.com/SamaraBuanaTungga/DaftarTugas.git]">Github</a></li>
+  <li>Github: <a href="https://github.com/SamaraBuanaTungga/DaftarTugas.git">Github</a></li>
   <li>Youtube: <a href=" ">Youtube</a></li>
 </ul>
