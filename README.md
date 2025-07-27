@@ -1,4 +1,4 @@
-# UTS Pemrograman Berorientasi Obyek 2
+# UAS Pemrograman Berorientasi Obyek 2
 <ul>
   <li>Mata Kuliah: Pemrograman Berorientasi Obyek 2</li>
   <li>Dosen Pengampu: <a href="https://github.com/Muhammad-Ikhwan-Fathulloh">Muhammad Ikhwan Fathulloh</a></li>
@@ -6,9 +6,11 @@
 
 ## Profil
 <ul>
-  <li>Nama: Samara Buana Tungga</li>
-  <li>NIM: 23552011126</li>
-  <li>Studi Kasus: Sistem Todo List Fullstack (Spring Boot + Thymeleaf)</li>
+  <li>Anggota:</li>
+  <li>[23552011125] Nada Ismaya</li>
+  <li>[23552011185] Naswa Mutiara</li>
+  <li>[23552011126] Samara Buana Tungga</li></li>
+  <li>Studi Kasus: Sistem Daftar Tugas Fullstack (Spring Boot + Thymeleaf)</li>
 </ul>
 
 ## Judul Studi Kasus
