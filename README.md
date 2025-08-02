@@ -18,7 +18,7 @@
 <p>Sistem Todo List Fullstack (Spring Boot + Thymeleaf)</p>
 
 ## Penjelasan Studi Kasus
-<p>Universitas Teknologi Bandung (UTB) ingin membangun sebuah sistem manajemen tugas (Todo List) berbasis web. Sistem ini ditujukan bagi mahasiswa dan dosen untuk mencatat dan mengelola daftar tugas pribadi secara online.</p>
+<p>Membangun sebuah sistem manajemen tugas (Daftar Tugas) berbasis web. Sistem ini ditujukan bagi pengguna untuk mencatat dan mengelola daftar tugas pribadi maupun bersama dalam bentuk proyek secara online.</p>
 
 <p>Aplikasi dikembangkan menggunakan framework Java Spring Boot sebagai backend dan Thymeleaf sebagai template engine untuk frontend. Arsitektur aplikasi mengadopsi pola MVC (Model-View-Controller) untuk memisahkan logika presentasi, bisnis, dan data.</p>
 
@@ -68,6 +68,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 ## Demo Proyek
 <ul>
-  <li>Github: <a href="https://github.com/SamaraBuanaTungga/DaftarTugas.git">Github</a></li>
-  <li>Youtube: <a href="https://youtu.be/51G8Th5MCvU">Youtube</a></li>
+  <li>Github <a href="https://github.com/SamaraBuanaTungga/DaftarTugas.git">https://github.com/SamaraBuanaTungga/DaftarTugas.git</a></li>
+  <li>Youtube <a href="https://youtu.be/51G8Th5MCvU">https://youtu.be/51G8Th5MCvU</a></li>
+  <li>Presentasi <a href="https://youtu.be/R280crf-3lI">https://youtu.be/R280crf-3lI</a></li>
 </ul>
