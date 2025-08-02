@@ -68,7 +68,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 ## Demo Proyek
 <ul>
-  <li>Github <a href="https://github.com/SamaraBuanaTungga/DaftarTugas.git">https://github.com/SamaraBuanaTungga/DaftarTugas.git</a></li>
-  <li>Youtube <a href="https://youtu.be/51G8Th5MCvU">https://youtu.be/51G8Th5MCvU</a></li>
-  <li>Presentasi <a href="https://youtu.be/R280crf-3lI">https://youtu.be/R280crf-3lI</a></li>
+  <li><a href="https://github.com/SamaraBuanaTungga/DaftarTugas.git">Github</a></li>
+  <li><a href="https://youtu.be/51G8Th5MCvU">Youtube</a></li>
+  <li><a href="https://youtu.be/R280crf-3lI">Presentasi</a></li>
 </ul>
