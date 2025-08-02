@@ -7,15 +7,14 @@
 
 ## Profil
 <ul>
-  <li>Anggota:</li>
+  Anggota:
   <li>[23552011125] Nada Ismaya</li>
   <li>[23552011185] Naswa Mutiara</li>
   <li>[23552011126] Samara Buana Tungga</li>
-  <li>Studi Kasus: Sistem Daftar Tugas Fullstack (Spring Boot + Thymeleaf)</li>
 </ul>
 
 ## Judul Studi Kasus
-<p>Sistem Todo List Fullstack (Spring Boot + Thymeleaf)</p>
+<p>Sistem Daftar Tugas Fullstack (Spring Boot + Thymeleaf)</p>
 
 ## Penjelasan Studi Kasus
 <p>Membangun sebuah sistem manajemen tugas (Daftar Tugas) berbasis web. Sistem ini ditujukan bagi pengguna untuk mencatat dan mengelola daftar tugas pribadi maupun bersama dalam bentuk proyek secara online.</p>
