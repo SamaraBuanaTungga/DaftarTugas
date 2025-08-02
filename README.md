@@ -1,3 +1,4 @@
+
 # UAS Pemrograman Berorientasi Obyek 2
 <ul>
   <li>Mata Kuliah: Pemrograman Berorientasi Obyek 2</li>
@@ -9,7 +10,7 @@
   <li>Anggota:</li>
   <li>[23552011125] Nada Ismaya</li>
   <li>[23552011185] Naswa Mutiara</li>
-  <li>[23552011126] Samara Buana Tungga</li></li>
+  <li>[23552011126] Samara Buana Tungga</li>
   <li>Studi Kasus: Sistem Daftar Tugas Fullstack (Spring Boot + Thymeleaf)</li>
 </ul>
 
@@ -17,20 +18,23 @@
 <p>Sistem Todo List Fullstack (Spring Boot + Thymeleaf)</p>
 
 ## Penjelasan Studi Kasus
-<p>Universitas Teknologi Bandung (UTB) ingin membangun sebuah sistem manajemen tugas (Todo List)
-berbasis web. Sistem ini akan digunakan oleh mahasiswa dan dosen untuk mencatat dan mengelola daftar
-tugas pribadi mereka secara online.
-Sistem akan dibangun menggunakan teknologi Java Spring Boot untuk backend dan Thymeleaf untuk
-frontend, dengan pendekatan fullstack berbasis MVC (Model-View-Controller).</p>
+<p>Universitas Teknologi Bandung (UTB) ingin membangun sebuah sistem manajemen tugas (Todo List) berbasis web. Sistem ini ditujukan bagi mahasiswa dan dosen untuk mencatat dan mengelola daftar tugas pribadi secara online.</p>
+
+<p>Aplikasi dikembangkan menggunakan framework Java Spring Boot sebagai backend dan Thymeleaf sebagai template engine untuk frontend. Arsitektur aplikasi mengadopsi pola MVC (Model-View-Controller) untuk memisahkan logika presentasi, bisnis, dan data.</p>
 
 ## Penjelasan 4 Pilar OOP dalam Studi Kasus
 
 ### 1. Inheritance
-<p>Spring menyediakan pewarisan otomatis melalui class dan interface seperti JpaRepository, memungkinkan penggunaan ulang metode standar CRUD tanpa harus ditulis ulang.</p>
+<p>Pewarisan konsep OOP diterapkan pada penggunaan antarmuka seperti <code>JpaRepository</code> yang diturunkan ke repository entitas. Ini memungkinkan penggunaan fungsi CRUD secara otomatis tanpa menuliskan ulang semua logika dasar.</p>
+
+```java
+public interface TodoRepository extends JpaRepository<Todo, Long> {
+    List<Todo> findByUser(User user);
+}
+```
 
 ### 2. Encapsulation
-<p>
-Setiap entitas seperti `User` dan `Todo` dikapsulasi sebagai class Java dengan atribut dan metode tersendiri. Akses ke field dilakukan melalui getter dan setter untuk menjaga integritas data.
+<p>Setiap entitas seperti <code>User</code> dan <code>Todo</code> dikemas dalam class dengan atribut private dan metode akses (getter & setter) yang menjaga integritas dan keamanan data.</p>
 
 ```java
 public class Todo {
@@ -38,33 +42,29 @@ public class Todo {
     private String task;
     private boolean completed;
     private User user;
+
     // Getter dan Setter
 }
 ```
-</p>
 
 ### 3. Polymorphism
-<p>
-Controller, service, dan konfigurasi keamanan mengimplementasikan dependensi melalui interface (seperti UserDetailsService) agar fleksibel dan mudah diuji atau diganti implementasinya.
+<p>Penggunaan interface seperti <code>UserDetailsService</code> pada sistem otentikasi memungkinkan penggantian implementasi secara fleksibel dan modular.</p>
 
 ```java
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
-    // Implementasi polymorphic dari loadUserByUsername()
+    // Implementasi metode loadUserByUsername secara polymorphic
 }
 ```
-</p>
 
-### 4. Abstract
-<p>
-Logika kompleks seperti penyimpanan data dan otentikasi disembunyikan di balik layer service dan repository, memisahkan logika bisnis dari logika presentasi (MVC).
+### 4. Abstraction
+<p>Logika kompleks aplikasi disembunyikan di balik layer service dan repository, memisahkan logika presentasi dari logika bisnis.</p>
 
 ```java
-public interface TodoRepository extends JpaRepository<Todo, Long> {
-    List<Todo> findByUser(User user);
+public interface UserRepository extends JpaRepository<User, Long> {
+    Optional<User> findByUsername(String username);
 }
 ```
-</p>
 
 ## Demo Proyek
 <ul>
